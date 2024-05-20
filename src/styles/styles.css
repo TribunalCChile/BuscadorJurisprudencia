@@ -1,0 +1,93 @@
+.bg-image-vertical {
+	position: relative;
+	overflow: hidden;
+	background-repeat: no-repeat;
+	background-position: right center;
+	background-size: auto 100%;
+}
+
+@media (min-width: 1025px) {
+	.h-custom-2 {
+		height: 100%;
+	}
+}
+.logo_main{
+	width: 120px;
+}
+
+.backG{
+	background-color: #b3a1a5;
+}
+
+.body{
+	background-color: ##212529;
+}
+
+.external-events {
+	border-radius: 5px;
+	margin-bottom:1em;
+	height:80%;
+	border: 1px solid #bbb;
+	overflow: auto;
+	padding:1em;
+}
+.dt-body-title{
+	font-weight: bold;
+}
+
+.backPrincipal{
+	background: #222e3c;
+}
+
+.barColor{
+	background: #19222c;
+}
+
+.barColor2{
+	background: #222e3c;
+}
+
+.backCalendar{
+	background: #f5f7fb;
+}
+
+.titleAgenda{
+	color: #f8f9fa;
+	font-size: 24px !important;
+}
+
+.titlePerson{
+	color: #f8f9fa;
+	font-size: 22px !important;
+}
+
+.clearColor{
+	color: #f8f9fa;
+}
+
+.ft-14{
+	font-size: 14px !important;
+}
+
+.ft-12{
+	font-size: 12px !important;
+}
+
+.ft-10{
+	font-size: 10px !important;
+}
+
+.inputs{
+	border-bottom: 1px solid #efeaea !important;
+	border-radius: 0px !important;
+}
+
+.decored{
+	text-decoration: none;
+}
+
+.btn-secondary{
+	background-color: #19222c !important;
+	border-color: #19222c !important;
+	color: #f8f9fa !important;
+}
