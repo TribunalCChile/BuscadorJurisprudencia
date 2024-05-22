@@ -108,6 +108,19 @@ const routes = [
         name: 'Proceso Crear Ficha',
         component: () => import('@/components/FichaCreateFlow.vue'),
       },
+      {
+        path: '/usuarios',
+        name: 'Usuarios',
+        component: () => import('@/views/pages/ListUsers.vue'),
+      },
+      {
+        path: '/permisos',
+        name: 'Permisos',
+        component: () => import('@/views/pages/ListPermissions.vue'),
+      },
+
+
+
 
       
 

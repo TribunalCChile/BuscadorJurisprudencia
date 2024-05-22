@@ -279,8 +279,8 @@
             <CTableRow>
                 <CTableHeaderCell scope="col" class="text-center">Rol</CTableHeaderCell>
                 <CTableHeaderCell scope="col" class="text-center">Nombre Template</CTableHeaderCell>
-                <CTableHeaderCell scope="col" class="text-center">Fecha de sentencia</CTableHeaderCell>
-                <CTableHeaderCell scope="col" class="text-center">Fecha de ingreso</CTableHeaderCell>
+                
+                <CTableHeaderCell scope="col" class="text-center">Fecha de resolución</CTableHeaderCell>
                 <CTableHeaderCell scope="col" class="text-center">Estado</CTableHeaderCell>
                 <CTableHeaderCell scope="col" class="text-center">Acciones</CTableHeaderCell>
             </CTableRow>
@@ -290,7 +290,7 @@
                 <CTableDataCell class="text-center">{{ ficha.folio }}</CTableDataCell>
                 <CTableDataCell class="text-center">{{ ficha.nombre }}</CTableDataCell>
                 <CTableDataCell class="text-center">{{ shortDateFormat(ficha.fecha_sentencia) }}</CTableDataCell>
-                <CTableDataCell class="text-center">{{ shortDateFormat(ficha.fecha_ingreso) }}</CTableDataCell>
+               
                 <CTableDataCell class="text-center">
                     <CBadge v-bind:class="setBadgeColor(ficha.estado_id)">{{ setStateName(ficha.estado_id) }}</CBadge>
                 </CTableDataCell> 

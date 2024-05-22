@@ -26,6 +26,7 @@
                 template: this.$store.state.template,
                 multiSelectOptions: {},
                 tagsOptions: {},
+                isSaving: false,
                 fixedArrayValues: {},
                 values: {
                     textInputs: [],
@@ -168,11 +169,13 @@
             }, 
 
             async submitForm() {
-                this.setSingleInput(this.values.textInputs); 
-                this.setMultipleInput(this.multiSelectOptions);
-                this.setMultipleInput(this.tagsOptions);
-                this.setFixedArrayInput(this.fixedArrayValues); 
-                
+                if(!this.isSaving) {
+                    this.setSingleInput(this.values.textInputs); 
+                    this.setMultipleInput(this.multiSelectOptions);
+                    this.setMultipleInput(this.tagsOptions);
+                    this.setFixedArrayInput(this.fixedArrayValues);
+                }
+
                 this.ficha = {
                         codigo: this.template.codigo,
                         folio: this.rol,
@@ -208,7 +211,8 @@
                             setTimeout(() => {
                                 this.showNotification = false;
                             }, this.duration);
-                        
+                            
+                            this.isSaving = true;
                             this.$router.push({
                                 name: 'Listar Fichas'
                             });
@@ -217,13 +221,14 @@
                     } catch(error) {
                         this.actionSuccess = false;
                         this.showNotification = true; 
+                        this.isSaving = true; 
                         
                         setTimeout(() => {
                             this.showNotification = false;
                             this.restoreInitialData();
                             //    this.closeModal(); 
                         }, this.duration);
-                       
+                                               
                     } 
                 } 
             },

@@ -123,12 +123,6 @@
                             this.selectedOptions[detail.parametro.id].push(option.valor); 
                         });
                     
-                    } else if (detail.tipo === 4) {
-                        detail.detalle_multiple.forEach(option => {
-                            this.fixedArrayValues[detail.parametro.id].push(option.valor); 
-                            console.log(this.fixedArrayValues)
-                        })
-                        
                     }
                 });
                 
@@ -141,11 +135,18 @@
                     if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id === null) {  
                         this.tagOptions[detail.parametro.id] = [];   
                         detail.detalle_multiple.forEach(option => {
-                            
                             this.tagOptions[detail.parametro.id].push(option.valor); 
                         });
                     
-                    } 
+                    } else if (detail.tipo === 4) {
+                        detail.detalle_multiple.forEach(option => {
+                            console.log('option: ',option);
+                            this.fixedArrayValues[detail.parametro.id].push(option.valor); 
+                            console.log(this.fixedArrayValues); 
+                            
+                        })
+                        
+                    }
                 });
 
                 
@@ -203,6 +204,7 @@
                                 link: item
                             })
                         }
+                        console.log('fixedarraymultiple: ',fixedArrayMultiple)
                         this.fichaDetalle.push({
                             parametro_id: key,
                             tipo: 4,
@@ -306,6 +308,7 @@
             },
             handleFixedArray(data) {
                 let { parameterId, values } = data; 
+                console.log('values: ', values); 
                 this.fixedArrayValues[parameterId] = values;
             },
 
@@ -330,21 +333,6 @@
             <CRow class="d-flex justify-content-between mb-3">
                 <CCol>
                     <b>Ficha - {{ ficha.nombre }}</b>
-                    <!-- <div class="mr-3">
-                        <label>Estado</label>
-                    </div>
-                    <div class="ml-4">
-                        <v-select
-                            v-model="estado"
-                            placeholder="Seleccione..."
-                            :options="states"
-                            :reduce="state => state.id"
-                            label="nombre"
-                            class="ml-5"
-                            :disabled="!onEdit"
-                        >
-                        </v-select>
-                    </div>  -->
                 </CCol>
                 <CCol class="d-flex justify-content-end align-items-center">
                     <CFormSwitch  
@@ -368,18 +356,7 @@
                             
                     ></CFormInput> 
                 </CCol>
-                <CCol>
-                    <label class="form-label mt-2">Fecha de ingreso<span class="text-danger">*</span></label>
-                    <DatePicker
-                        placeholder="Escoja un rango de fechas"
-                        model-type="yyyy-MM-dd HH:mm:ss"
-                        :max-date="maxDate"
-                        v-model="fecha_ingreso"
-                        :day-names="dayNames"
-                        @update:model-value="handleDateFechaIngreso"
-                        :disabled="!onEdit"
-                    />
-                </CCol>
+                
                 <CCol>
                     <label class="form-label mt-2">Fecha de sentencia<span class="text-danger">*</span></label>
                     <DatePicker
@@ -392,18 +369,7 @@
                         :disabled="!onEdit"
                     />
                 </CCol> 
-                <CCol>
-                    <label class="form-label mt-2">Fecha de acuerdo<span class="text-danger">*</span></label>
-                    <DatePicker
-                        placeholder="Escoja un rango de fechas"
-                        model-type="yyyy-MM-dd HH:mm:ss"
-                        :max-date="maxDate"
-                        v-model="fecha_acuerdo"
-                        :day-names="dayNames"
-                        @update:model-value="handleDateFechaAcuerdo"
-                        :disabled="!onEdit"
-                    />
-                </CCol>
+                
                 
             </CRow>
             
@@ -459,22 +425,21 @@
                             :disabled="!onEdit"
                             :dataTypeId="field.parametro.tipodato_id"
                             :parameterName="field.parametro.nombre"
-                            :parameterId="field.parametro.id"  
+                            :parameterId="field.parametro.id"
+                            :selectedInputs="fixedArrayValues[field.parametro.id]"
                         />
                     </div>
                     
                 </div>
             </CForm> 
-
-            
             <CButton color="dark" @click="submitForm">Guardar</CButton>
         </CCardBody>
         </CCard>
 
         <ToastNotification
-        v-if="showNotification"
-        :type="getResultType()"
-        :duration="duration"
-        :message="getResultMsg()" 
+            v-if="showNotification"
+            :type="getResultType()"
+            :duration="duration"
+            :message="getResultMsg()" 
         />
 </template>

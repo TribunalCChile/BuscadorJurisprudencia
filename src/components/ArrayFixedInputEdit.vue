@@ -10,6 +10,7 @@
             parameterName: String,
             parameterId: Number,
             disabled: Boolean,
+            selectedInputs: Array,
         },
         setup(props, context) {
             const store = useStore(); 
@@ -18,8 +19,10 @@
             const dataTypeId = props.dataTypeId; 
             const parameterName = props.parameterName;
             const parameterId = props.parameterId;
+            const selectedInputs = props.selectedInputs; 
             const disabled = props.disabled; 
             
+            console.log(selectedInputs);
             const inputs = ref({});
             onMounted(() => {
                 getDataTypeContent();
@@ -54,6 +57,7 @@
             }
 
             function filterFixedArray(value) {
+                console.log("value: ", inputs.value);
                 context.emit('filterFixedArray', {
                     parameterId: parameterId,
                     values: inputs.value,
