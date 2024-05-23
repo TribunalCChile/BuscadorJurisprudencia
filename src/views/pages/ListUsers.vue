@@ -3,8 +3,8 @@
     import axios from 'axios'; 
     import { CIcon } from '@coreui/icons-vue';
     import * as icon from '@coreui/icons';
-    import EditParameterModal from '../../components/EditParameterModal.vue';
-    import DeleteParameterModal from '../../components/DeleteParameterModal.vue';
+    import EditUserModal from '../../components/EditUser.vue';
+    import DeleteUserModal from '../../components/DeleteUser.vue';
     import AddParameterModal from '../../components/AddParameterModal.vue';
     import SearchBarFilter from '../../components/SearchBarFilter.vue';
 
@@ -13,8 +13,8 @@
         components: {
             CIcon,
             AddParameterModal,
-            EditParameterModal,
-            DeleteParameterModal,
+            EditUserModal,
+            DeleteUserModal,
             SearchBarFilter
         },
         setup() {
@@ -29,8 +29,9 @@
                 showDeleteModal: false,
                 showAddModal: false,
                 showEditModal: false,
-                parameterId: null,
+                userId: null,
                 searchFilter: '',
+                
             }
         },
         mounted() {
@@ -56,7 +57,6 @@
             },
 
             setRolColor(rol) {
-                
                 switch(rol) {
                     case 1:
                         return 'danger';
@@ -130,15 +130,15 @@
         </CCol>
         <CCol class="col-xl-3">
             <CButton color="success"  class="mt-2 text-white" @click="addUser">
-                Nuevo
-                Parámetro
+                <CIcon :icon="icon.cilUserPlus" size="lg"/>
+                Usuario
             </CButton>
         </CCol>
     </CRow>
-    <div class="mt-5">
+    <!-- <div class="mt-5">
         <SearchBarFilter @search="handleSearch" placeholder="Buscar parámetro..." />
     
-    </div>
+    </div> -->
     <div>
         <CTable class="mt-4">
             <CTableHead>
@@ -195,15 +195,15 @@
             @closeAddParameterModal="onCloseAdd"
         />
 
-        <EditParameterModal
+        <EditUserModal
             :showEditModal="showEditModal"
-            @closeEditParameterModal="onCloseEdit"
-            :parameter="parameterId"
+            @closeEditUserModal="onCloseEdit"
+            :user="userId"
         />
-        <DeleteParameterModal
+        <DeleteUserModal
             :showDeleteModal="showDeleteModal"
             @closeDeleteUserModal="onCloseDelete"
-            :parameter="parameterId"
+            :user="userId"
         />
     </div>
 </template>

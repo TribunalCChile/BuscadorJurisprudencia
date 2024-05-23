@@ -67,7 +67,7 @@
                 },
                 actionSuccess: false,
                 showNotification: false,
-                resultMsg: '',
+                errorMsg: '',
                 resultType:'',
                 duration: 1500,
                 templates: [],

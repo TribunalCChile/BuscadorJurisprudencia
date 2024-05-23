@@ -72,7 +72,7 @@
             async deleteUser() {
                     try {
                         const response = await axios.delete(
-                            this.$store.state.backendUrl + '/user/' + this.parameter.id,
+                            this.$store.state.backendUrl + '/user/' + this.user.id,
                             {
                                 headers: {
                                     'Content-Type': 'application/json',

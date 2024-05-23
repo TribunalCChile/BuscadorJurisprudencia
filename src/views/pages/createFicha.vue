@@ -41,8 +41,8 @@
                 estado_id: 1,
                 rol: '',
                 resultType: '',
-                duration: 2000,
-                resultMsg: '',
+                duration: 3000,
+                errorMsg: '',
                 actionSuccess: false,
                 showNotification: false,
                 maxDate:new Date(),
@@ -103,6 +103,11 @@
                 return this.actionSuccess ? 'success' : 'error'; 
             },
             getResultMsg() {
+                if (this.actionSuccess) {
+                    return 'Ficha guardada exitósamente.';
+                } else {
+                    return this.errorMsg ? this.errorMsg : 'Error al guardar Ficha.'; 
+                }
                 return this.actionSuccess ? 'Ficha guardada exitósamente.' : 'Error al guardar Ficha'; 
             }, 
             restoreInitialData() {
@@ -222,6 +227,14 @@
                         this.actionSuccess = false;
                         this.showNotification = true; 
                         this.isSaving = true; 
+
+                        if (error.response && error.response.data && error.response.data.errors) {
+                            const errors = error.response.data.errors; 
+                            this.errorMsg = Object.values(errors).join('\n');
+                        
+                        } else {
+                            this.errorMsg = 'Error al guardar Ficha'; 
+                        }
                         
                         setTimeout(() => {
                             this.showNotification = false;

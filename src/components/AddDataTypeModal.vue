@@ -63,7 +63,7 @@
                 },
                 actionSuccess: false,
                 showNotification: false,
-                resultMsg: '',
+                errorMsg: '',
                 resultType:'',
                 duration: 1500,
                 
@@ -92,7 +92,12 @@
                 return this.actionSuccess ? 'success' : 'error'; 
             },
             getResultMsg() {
-                return this.actionSuccess ? 'Tipo de dato añadido exitósamente' : 'Error al añadir tipo de dato'; 
+                if (this.actionSuccess) {
+                    return 'Tipo de dato guardado exitósamente.';
+                } else {
+                    return this.errorMsg ? this.errorMsg : 'Error al guardar Tipo de dato.'; 
+                }
+                
             }, 
 
             restoreInitialData() {
@@ -154,6 +159,13 @@
                     } catch (error) {
                         this.actionSuccess = false;
                         this.showNotification = true; 
+                        if (error.response && error.response.data && error.response.data.errors) {
+                            const errors = error.response.data.errors; 
+                            this.errorMsg = Object.values(errors).join('\n');
+                        
+                        } else {
+                            this.errorMsg = 'Error al guardar Ficha'; 
+                        }
                         
                         setTimeout(() => {
                             this.showNotification = false;
