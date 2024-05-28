@@ -4,6 +4,7 @@
     import { CIcon } from '@coreui/icons-vue';
     import * as icon from '@coreui/icons';
     import EditUserModal from '../../components/EditUser.vue';
+    import AddUserModal from '../../components/AddUser.vue'; 
     import DeleteUserModal from '../../components/DeleteUser.vue';
     import AddParameterModal from '../../components/AddParameterModal.vue';
     import SearchBarFilter from '../../components/SearchBarFilter.vue';
@@ -15,7 +16,8 @@
             AddParameterModal,
             EditUserModal,
             DeleteUserModal,
-            SearchBarFilter
+            SearchBarFilter,
+            AddUserModal
         },
         setup() {
             return {
@@ -190,9 +192,9 @@
                 </CTableRow>
             </CTableBody>
         </CTable>
-        <AddParameterModal 
+        <AddUserModal 
             :showModal="showAddModal"
-            @closeAddParameterModal="onCloseAdd"
+            @closeAddUserModal="onCloseAdd"
         />
 
         <EditUserModal

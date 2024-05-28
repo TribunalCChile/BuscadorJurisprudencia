@@ -40,7 +40,7 @@
                             <CIcon icon="cil-lock-locked" />
                           </CInputGroupText>
                           <CFormInput 
-						  		v-model.trim="form.password" 
+						  		v-model="form.password" 
 								@input="setTouched('password')" 
 								type="password" 
 								placeholder="Contraseña"  

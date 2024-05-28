@@ -41,7 +41,7 @@
             <CButton color="secondary" @click="closeModal">
                 Cerrar
             </CButton>
-            <CButton color="primary" @click="saveUser" disabled>Guardar</CButton>
+            <CButton color="primary" @click="saveUser" >Guardar</CButton>
         </CModalFooter>
     </CModal>
     <ToastNotification
@@ -90,7 +90,11 @@
             }
         },
         
-
+        computed: {
+           /*  isDisabledButton() {
+                return !this.form.name.length || this.form.email.length || !this.form.roles.length; 
+            } */
+        },
         watch: {
             user: {
                 handler(newConfig) {

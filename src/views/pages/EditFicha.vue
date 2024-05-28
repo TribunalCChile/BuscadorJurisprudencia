@@ -100,7 +100,7 @@
                     } else if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id === null) {    
                         this.tagOptions[detail.parametro.id] = [];
                     } else if (detail.parametro.tipoparametro_id === 4) {
-                        this.fixedArrayValues[detail.parametro.id] = []; 
+                        this.fixedArrayValues[detail.parametro.id] = {}; 
                     }
                     
                 });
@@ -136,13 +136,15 @@
                         this.tagOptions[detail.parametro.id] = [];   
                         detail.detalle_multiple.forEach(option => {
                             this.tagOptions[detail.parametro.id].push(option.valor); 
+                            console.log('tag: ', this.tagOptions[detail.parametro.id]); 
                         });
                     
                     } else if (detail.tipo === 4) {
                         detail.detalle_multiple.forEach(option => {
                             console.log('option: ',option);
-                            this.fixedArrayValues[detail.parametro.id].push(option.valor); 
-                            console.log(this.fixedArrayValues); 
+                            this.fixedArrayValues[detail.parametro.id][option.link] = option.valor; 
+                            console.log('precepto: ',this.fixedArrayValues)
+                            //console.log('precepto: ',this.fixedArrayValues[detail.parametro.id]); 
                             
                         })
                         

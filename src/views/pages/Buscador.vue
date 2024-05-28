@@ -88,7 +88,7 @@
                         <CCard class="clickable mt-2" v-for="result in filteredResults" :key="result.id">
                             <CCardBody>
                                 <CCardTitle as="h6">Causa N° {{ result.folio }}</CCardTitle>
-                                <CCardSubtitle class="mb-2 text-body-secondary">Fecha ingreso: {{ result.fecha_ingreso }}</CCardSubtitle>
+                                <CCardSubtitle class="mb-2 text-body-secondary">Fecha sentencia: {{ result.fecha_sentencia }}</CCardSubtitle>
                                 <template v-for="detail,index in result.detalle" :key="index">
                                    <CCardSubtitle class="mb-2 text-body-secondary text-justify">
                                         <!-- {{ highlightText(detail.parametro.nombre, searchFilter) }}: {{ highlightText(detail.valor, searchFilter) }} -->

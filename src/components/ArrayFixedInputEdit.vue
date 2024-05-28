@@ -1,7 +1,7 @@
 <script>
     import axios from 'axios'; 
     import { useStore } from 'vuex'
-    import { computed, onMounted, ref, watch } from 'vue'
+    import { computed, onMounted, ref, watch, watchEffect } from 'vue'
     export default {
         name: 'Array Fixed Input',
         emits: ['filterFixedArray'],
@@ -10,11 +10,12 @@
             parameterName: String,
             parameterId: Number,
             disabled: Boolean,
-            selectedInputs: Array,
+            selectedInputs: Object,
         },
         setup(props, context) {
             const store = useStore(); 
             const dataTypeContent = ref([]);
+            const inputs = ref({});
             //propiedades 
             const dataTypeId = props.dataTypeId; 
             const parameterName = props.parameterName;
@@ -23,14 +24,19 @@
             const disabled = props.disabled; 
             
             console.log(selectedInputs);
-            const inputs = ref({});
+            /* watchEffect(() => {
+                if (props.selectedInputs) {
+                    inputs.value = { ...props.selectedInputs }; 
+                }
+            }); */
             onMounted(() => {
                 getDataTypeContent();
+                
             })
 
-            watch(inputs, (newInputs, oldInputs) => {
+            /* watch(inputs, (newInputs, oldInputs) => {
                 filterFixedArray(newInputs);
-            }, { deep: true }); 
+            }, { deep: true });  */
 
             async function getDataTypeContent() {
                 try {
@@ -57,7 +63,6 @@
             }
 
             function filterFixedArray(value) {
-                console.log("value: ", inputs.value);
                 context.emit('filterFixedArray', {
                     parameterId: parameterId,
                     values: inputs.value,
@@ -65,6 +70,10 @@
 
                 
             }
+           /*  watchEffect(() => {
+                // Esto ejecutará filterFixedArray cada vez que inputs cambie
+                filterFixedArray();
+            }); */
             
             return {
                 dataTypeContent,
