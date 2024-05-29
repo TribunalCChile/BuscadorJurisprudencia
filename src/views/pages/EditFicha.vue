@@ -51,26 +51,14 @@
                 selectedOptions: {},
                 tagOptions: {},
                 fixedArrayValues: {},
-                states: [
-                    {
-                        'id': 1,
-                        'nombre': 'Ingresado'
-                    },
-                    {
-                        'id': 2,
-                        'nombre': 'Procesado'
-                    },
-                    {
-                        'id': 3,
-                        'nombre': 'Anulado'
-                    },                    
-                ]
+                template: null
 
             }
         },
         mounted() {
             this.initializeSelectedOptions();
             this.setDataFicha(this.ficha);
+            this.getTemplates(); 
             console.log("FICHA: ",this.ficha);
             
         },
@@ -87,7 +75,31 @@
                 return sortedDetail; 
             },
         },
-        methods: {   
+        methods: {
+            async getTemplates() {
+                try {
+                    const response = await axios.get(
+                        this.$store.state.backendUrl + '/template',
+                        { 
+                            params: {
+                                filter: JSON.stringify({'id': this.ficha.template_id})
+                            },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: 'Bearer ' + this.$store.state.token,
+                            }
+                        }
+                    );
+                    
+                    this.template = response.data[0];
+                    console.log(this.template);
+                    
+                } catch (error) {
+                    console.error('Error en la solicitud a la API:', error);
+                    this.failMsg = 'Error al obtener templates.'; 
+                    this.fail = true;
+                }
+            },
             getActualTemplate(template) {
                 const templateId = this.ficha.template_id; 
                 return template.find(elem => elem.id === templateId); 
@@ -378,6 +390,7 @@
         </CCardHeader>
         <CCardBody>
             <CCardTitle>Ingreso de datos de ficha</CCardTitle>
+            
             <CForm class="mt-4">
                 <div v-for="field in ficha.detalle" :key="field.id" class="mb-3">
                     <div v-if="field.tipo === 1">

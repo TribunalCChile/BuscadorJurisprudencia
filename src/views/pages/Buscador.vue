@@ -258,7 +258,7 @@
                     this.loading = false; 
                 }, 1000); 
                 const response = await axios.get(
-                    this.$store.state.backendUrl + '/ficha', 
+                    this.$store.state.backendUrl + '/buscadorfichaexterno', 
                     {
                         params: {
                             'filter': JSON.stringify({ "search": this.searchFilter }) 
