@@ -249,7 +249,7 @@
             handleFixedArray(data) {
                 let { parameterId, values } = data; 
                 this.fixedArrayValues[parameterId] = values;
-                
+                console.log(this.fixedArrayValues[parameterId]); 
                 
             },
 

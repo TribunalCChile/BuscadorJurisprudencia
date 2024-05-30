@@ -111,7 +111,10 @@
                                 class="d-flex justify-content-between align-items-center"
                             >
                                 {{ parameter.nombre }}
-                                <CButton 
+
+                                <div class="d-flex">
+                                    
+                                    <CButton 
                                     @click="removeParameter(parameter)"
                                      
                                     variant="outline"
@@ -124,8 +127,10 @@
                                     @mouseover="isHoverDeleteIndex = index"
                                     @mouseleave="isHoverDeleteIndex = null"
                                     
-                                />
-                                </CButton>
+                                    />
+                                    </CButton>
+                                </div>
+                                
                             </CListGroupItem>
                         </VueDraggable>
                         </CListGroup>
@@ -166,12 +171,14 @@
     import { CIcon } from '@coreui/icons-vue';
     import * as icon from '@coreui/icons';
     import SearchBarFilter from '../../components/SearchBarFilter.vue';
+    import CounterPreceptoLegal from '../../components/CounterPreceptoLegal.vue';
     import AddParameterModal from '../../components/AddParameterModal.vue';
     import AddTemplateModal from '../../components/AddTemplateModal.vue';
     import EditParameterModal from '../../components/EditParameterModal.vue';
     import FichaCreateFlow from '../../components/FichaCreateFlow.vue'; 
     import { reactive } from 'vue';
     import { VueDraggable } from 'vue-draggable-plus';
+
 
     export default {
         name: 'Crear Template',
@@ -182,7 +189,8 @@
             AddTemplateModal,
             VueDraggable,
             EditParameterModal,
-            FichaCreateFlow
+            FichaCreateFlow,
+            CounterPreceptoLegal
         },
         data() {
             return {
@@ -200,6 +208,8 @@
                 isHoverEditIndex: false,
                 isHoverAddIndex: false, 
                 isHoverDeleteIndex: false,
+                parameterCounters: {},
+                
             }
         },
         setup() {
@@ -227,7 +237,12 @@
             
         },
         methods: {
-            
+            handleCounterPrecepto(counterData) {
+                const { counter, parameterId } = counterData;
+                this.parameterCounters[parameterId] = counter;
+                console.log(this.parameterCounters); 
+                
+            },
             editParameter(parameter, index) {
                 this.showEditParameterModal = true; 
                 this.parameterId = parameter; 

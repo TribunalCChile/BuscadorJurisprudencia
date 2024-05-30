@@ -24,17 +24,42 @@
             const dataTypeId = props.dataTypeId; 
             const parameterName = props.parameterName;
             const parameterId = props.parameterId;
-            
+            const isHoverAdd = ref(false); 
+            const isHoverRemove = ref(false);
+            const rowsPreceptoLegal = ref([])
             const inputs = ref({});
-            onMounted(() => {
-                getDataTypeContent();
-                getCuerpoLegal(); 
-            })
 
-            watch(inputs, (newInputs, oldInputs) => {
+            onMounted(async () => {
+                /* async y await para que primero se llamen las api y luego llenar los rows */ 
+                await getDataTypeContent();
+                await getCuerpoLegal();
+                initializeRows();
+            });
+
+            watch(rowsPreceptoLegal, (newInputs, oldInputs) => {
                 filterFixedArray(newInputs);
             }, { deep: true }); 
+            
+            const initializeRows = () => {
+                addRowPreceptoLegal(); 
+                console.log("rows initial: ", rowsPreceptoLegal.value); 
+            }  
+            const addRowPreceptoLegal = () => {
+                const newRow = {
+                    'Cuerpo Legal': '',
+                    ...Object.fromEntries(dataTypeContent.value.tipo_dato_contenido.map(datatype => [datatype.nombre, '']))
+                }
+                rowsPreceptoLegal.value.push(newRow); 
+                console.log(rowsPreceptoLegal.value);
+            }
 
+            const removeRowPreceptoLegal = (index) => {
+                console.log(index); 
+                rowsPreceptoLegal.value = rowsPreceptoLegal.value.filter((row, i) => i !== index);
+                console.log(rowsPreceptoLegal.value);
+                
+            }   
+                 
             async function getDataTypeContent() {
                 try {
                     const response = await axios.get(
@@ -82,10 +107,10 @@
                  
             }
 
-            function filterFixedArray(value) {
+            const filterFixedArray = (value) => {
                 context.emit('filterFixedArray', {
                     parameterId: parameterId,
-                    values: inputs.value,
+                    values: rowsPreceptoLegal.value,
                 })     
             }
             
@@ -93,6 +118,11 @@
                 dataTypeContent,
                 parameterName,
                 cuerpoLegalContent,
+                rowsPreceptoLegal,
+                addRowPreceptoLegal,
+                removeRowPreceptoLegal,
+                isHoverAdd,
+                isHoverRemove,
                 inputs,
                 icon
             }
@@ -104,13 +134,25 @@
     <CCard>
         <CCardHeader class="d-flex justify-content-between align-items-center">
             <span>{{ parameterName }}</span>
-            <CButton color="primary"><CIcon :icon="icon.cilPlus" size="sm" class="text-white" /></CButton>
+            <CButton 
+                variant="outline"
+                @click="addRowPreceptoLegal"
+                ><CIcon 
+                    :icon="icon.cilPlus" 
+                    size="lg"
+                    :class="{'text-success': isHoverAdd}"
+                    @mouseover="isHoverAdd = true"
+                    @mouseleave="isHoverAdd = false"       
+                />
+            </CButton>
+            
         </CCardHeader>
         <CCardBody>
-            <CRow>
+            <CRow v-for="(row, index) in rowsPreceptoLegal" :key="index" class="mt-2">
                 <CCol>
                     <label class="">{{ cuerpoLegalContent.nombre }}</label>
                     <v-select
+                        v-model="row['Cuerpo Legal']"
                         placeholder="Seleccione..."
                         :options="cuerpoLegalContent.tipo_dato_contenido"
                         :reduce="dataType => dataType.nombre"
@@ -126,14 +168,27 @@
                 <CCol v-for="dataType in dataTypeContent.tipo_dato_contenido" :key="dataType.id">
                      
                     <CFormInput
-                        v-model="inputs[dataType.nombre]"
+                        v-model="row[dataType.nombre]"
                         type="text"
                         :label="dataType.nombre"
                     />
                 </CCol>
-                
+                <CCol>
+                    <CButton 
+                    variant="outline"
+                    color="danger"
+                    class="mt-4"
+                    size="sm"
+                    @click="removeRowPreceptoLegal(index)"
+                    ><CIcon 
+                        :icon="icon.cilTrash" 
+                        size="lg"
+                        class="mt-1"      
+                    />
+            </CButton>
+                </CCol>
             </CRow>
-                    
+                
         </CCardBody>
     </CCard>
         
