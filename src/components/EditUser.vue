@@ -6,6 +6,7 @@
         <CModalBody>
            
             <CForm>
+                <CFormCheck label="LDAP" v-model="form.ldap" />
                 <label for="">Nombre</label>
                 <CFormInput
                     type="text"
@@ -23,18 +24,7 @@
                     v-model="form.email"
                     class="mt-1"
                 />
-                <label class="mt-3">Rol</label>
-                <v-select
-                    v-model="form.roles"
-                    :options="allRoles"
-                    :reduce="rol => rol.name"
-                    placeholder="Seleccione..."
-                    label="name"
-                    @option:selected="handleSelectRol"
-                    class="mt-1"
-                    multiple
-                >
-                </v-select>
+                
             </CForm>
         </CModalBody>
         <CModalFooter>
@@ -78,6 +68,7 @@
                     name: '',
                     email: '',
                     roles: [],
+                    ldap: 0,
                 },
                 isTypeSelected: false,
                 actionSuccess: false,
@@ -125,6 +116,7 @@
                     this.form.id = newConfig.id;
                     this.form.name = newConfig.name;
                     this.form.email = newConfig.email;
+                    this.form.ldap = newConfig.ldap; 
                     
                     if (newConfig.roles.length) {
                         this.form.roles = newConfig.roles; 
@@ -160,7 +152,7 @@
             async saveUser() {
                 try {
                     const response = await axios.put(
-                        this.$store.state.backendUrl + '/parametro/' + this.form.id,
+                        this.$store.state.backendUrl + '/user/' + this.form.id,
                         this.form,
                         {
                             headers: {

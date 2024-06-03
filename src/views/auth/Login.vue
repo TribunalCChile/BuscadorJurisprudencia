@@ -186,7 +186,7 @@ export default {
                         "token":resp.access_token,
                         "name":resp.name,
                     });
-                 
+                    
                     this.$router.push('/')
                     this.isSendingForm = false;
             

@@ -208,6 +208,18 @@
                         <template v-if="detail.parametro.tipoparametro_id === 1 || detail.parametro.tipoparametro_id === 3">
                             <CTableDataCell>{{ detail.valor }}</CTableDataCell>
                         </template>
+
+                        <template v-else-if="detail.parametro.tipoparametro_id === 4">
+                            <CTableDataCell>
+                                <p v-for="(elem, index) in detail.detalle_multiple" :key="index">
+                                    <div v-if="elem.valor">
+                                        {{ elem.link }}: {{ elem.valor }}
+                                    </div>
+                                    
+                                </p>
+                            </CTableDataCell>
+                            
+                        </template>
                         
                         <template v-else>
                             <CTableDataCell>

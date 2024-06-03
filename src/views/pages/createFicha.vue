@@ -116,6 +116,33 @@
                 
                 
             },
+            areObjectsEqual(obj1, obj2) {
+                const keysObj1 = Object.keys(obj1); 
+                const keysObj2 = Object.keys(obj2); 
+
+                if (keysObj1.length !== keysObj2) {
+                    return false; 
+                }
+
+                return keysObj1.every(key => obj2.hasOwnProperty(key) && obj1[key] === obj2[key]);  
+                /* if (obj1 === obj2) {
+                    return true;
+                }
+
+                if (typeof obj1 !== 'object' || obj1 === null || 
+                    typeof obj2 !== 'object' || obj2 === null) {
+                    return false;
+                }
+
+                const keys1 = Object.keys(obj1);
+                const keys2 = Object.keys(obj2);
+
+                if (keys1.length !== keys2.length) {
+                    return false;
+                }
+
+                return keys1.every(key => obj2.hasOwnProperty(key) && areObjectsEqual(obj1[key], obj2[key])); */
+            },
             setSingleInput(textInputs) {
                 if (textInputs) {
                     textInputs.forEach((detail, index) => {
@@ -150,30 +177,45 @@
                     }
                 }
             },
-            setFixedArrayInput(fixedArray) {
-                if (fixedArray) {
-                    for (let key in fixedArray) {
-                        let value = fixedArray[key];
-                        let fixedArrayMultiple = [];
+            setFixedArrayInput(preceptosLegales) {
+                console.log(preceptosLegales); 
+                if (preceptosLegales) {
+                    for (let precepto in preceptosLegales) {
+                        let preceptoField = preceptosLegales[precepto];
+                        for (const row in preceptoField) {
+                            let multipleDetail = [];
+                            let values = preceptoField[row];
 
-                        for (let item in value){
-                            fixedArrayMultiple.push({
-                                valor: value[item],
-                                link: item
-                            })
+                            for(const item in values) {
+                                multipleDetail.push({
+                                    valor: values[item],
+                                    link: item})
+                            }
+
+                            /* validación si este cambio ya existe 
+                                si existe no se agregará a ficha final */
+                            let newDetailFicha = {
+                                parametro_id: precepto,
+                                tipo: 4,
+                                valor: null,
+                                detalleMultiple: multipleDetail
+                            }; 
+                            this.fichaDetalle.push(newDetailFicha);
                         }
-                        this.fichaDetalle.push({
-                            parametro_id: key,
-                            tipo: 4,
-                            valor:null,
-                            detalleMultiple: fixedArrayMultiple
-                        });
+                    
                     }
                     
+                     
                 }
             }, 
 
             async submitForm() {
+                /* En el futuro espero poder encontrar una mejor forma
+                de validar que no se guarden repetidamente los elementos cuando haya error.
+                De momento lo dejo hardcodeado */ 
+
+                this.fichaDetalle = []; 
+
                 if(!this.isSaving) {
                     this.setSingleInput(this.values.textInputs); 
                     this.setMultipleInput(this.multiSelectOptions);
@@ -249,7 +291,7 @@
             handleFixedArray(data) {
                 let { parameterId, values } = data; 
                 this.fixedArrayValues[parameterId] = values;
-                console.log(this.fixedArrayValues[parameterId]); 
+                //console.log(this.fixedArrayValues[parameterId]); 
                 
             },
 

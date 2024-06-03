@@ -84,7 +84,7 @@
                     name: '',
                     email: '',
                     password: '',
-                    ldap: false,
+                    ldap: 0,
                 },
                 actionSuccess: false,
                 showNotification: false,

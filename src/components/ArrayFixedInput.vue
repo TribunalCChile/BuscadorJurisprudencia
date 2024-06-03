@@ -42,7 +42,7 @@
             
             const initializeRows = () => {
                 addRowPreceptoLegal(); 
-                console.log("rows initial: ", rowsPreceptoLegal.value); 
+                
             }  
             const addRowPreceptoLegal = () => {
                 const newRow = {
@@ -53,11 +53,9 @@
                 console.log(rowsPreceptoLegal.value);
             }
 
-            const removeRowPreceptoLegal = (index) => {
-                console.log(index); 
-                rowsPreceptoLegal.value = rowsPreceptoLegal.value.filter((row, i) => i !== index);
+            const removeRowPreceptoLegal = (indexElem) => { 
+                rowsPreceptoLegal.value = rowsPreceptoLegal.value.filter((row, index) => index !== indexElem);
                 console.log(rowsPreceptoLegal.value);
-                
             }   
                  
             async function getDataTypeContent() {

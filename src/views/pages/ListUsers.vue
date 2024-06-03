@@ -8,6 +8,7 @@
     import DeleteUserModal from '../../components/DeleteUser.vue';
     import AddParameterModal from '../../components/AddParameterModal.vue';
     import SearchBarFilter from '../../components/SearchBarFilter.vue';
+    import EditRolUserModal from '../../components/EditRolUser.vue';
 
     export default {
         name: 'Listar Usuarios',
@@ -15,6 +16,7 @@
             CIcon,
             AddParameterModal,
             EditUserModal,
+            EditRolUserModal,
             DeleteUserModal,
             SearchBarFilter,
             AddUserModal
@@ -31,6 +33,7 @@
                 showDeleteModal: false,
                 showAddModal: false,
                 showEditModal: false,
+                showEditRolModal: false,
                 userId: null,
                 searchFilter: '',
                 
@@ -54,6 +57,9 @@
             }
         },
         methods: {
+            isActualUser(user) {
+                return user.name === this.$store.state.name; 
+            },
             handleSearch(search) {
                 this.searchFilter = search; 
             },
@@ -91,6 +97,10 @@
                     console.error('Error en la solicitud a la API:', error);
                 }
             },
+            editRolUser(user) {
+                this.showEditRolModal = true;
+                this.userId = user; 
+            },
             addUser() {
                 this.showAddModal = true; 
             },
@@ -101,6 +111,10 @@
             deleteUser(user) {
                 this.showDeleteModal = true; 
                 this.userId = user; 
+            },
+            onCloseEditRol(){
+                this.showEditRolModal = false;
+                this.getUsers(); 
             },
             onCloseAdd() {
                 this.showAddModal = false;
@@ -153,7 +167,19 @@
             </CTableHead>
             <CTableBody>
                 <CTableRow v-for="(user, index) in filteredUsers" :key="user.id">
-                    <CTableDataCell>{{ user.name }} </CTableDataCell>
+                    <template v-if="isActualUser(user)">
+                        <CTableDataCell>{{ user.name }} 
+                            <CBadge
+                                size="sm" 
+                                color="success"
+                                variant="outline"    
+                            >Actual</CBadge>
+                        </CTableDataCell>
+                    </template>
+                    <template v-else>
+                        <CTableDataCell>{{ user.name }} </CTableDataCell>
+                    </template>
+                    
                     <CTableDataCell class="text-center">{{ user.email }} </CTableDataCell>
                     <template v-if="user.roles.length > 0">
                         <template v-for="(rol, index) in user.roles">
@@ -181,12 +207,31 @@
                         </CTableDataCell>
                     </template>
                     <CTableDataCell class="text-center">
-                        <CButton @click="editUser(user)">
+                        <CButton @click="editUser(user)"
+                            v-c-tooltip="{
+                                content: 'Editar información de usuario', 
+                                placement: 'bottom'
+                            }"
+                        >
                             <CIcon :icon="icon.cilPen" size="xl"/>
                         </CButton>
-                        <CButton @click="deleteUser(user)">
+                        <CButton @click="editRolUser(user)"
+                            v-c-tooltip="{
+                                content: 'Editar Rol de usuario', 
+                                placement: 'bottom'
+                            }"    
+                        >
+                            <CIcon :icon="icon.cilUserFollow" size="xl"/>
+                        </CButton>
+                        <CButton @click="deleteUser(user)"
+                            v-c-tooltip="{
+                                content: 'Eliminar usuario', 
+                                placement: 'bottom'
+                            }"
+                        >
                             <CIcon :icon="icon.cilTrash" size="xl"/>
                         </CButton>
+                        
                     </CTableDataCell>
                     
                 </CTableRow>
@@ -200,6 +245,11 @@
         <EditUserModal
             :showEditModal="showEditModal"
             @closeEditUserModal="onCloseEdit"
+            :user="userId"
+        />
+        <EditRolUserModal 
+            :showModal="showEditRolModal"
+            @closeEditRolModal="onCloseEditRol"
             :user="userId"
         />
         <DeleteUserModal
