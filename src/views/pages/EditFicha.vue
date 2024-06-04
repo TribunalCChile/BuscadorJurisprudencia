@@ -28,6 +28,7 @@
         data() {
             return {
                 ficha: this.$store.state.ficha,
+                updatedFicha: null,
                 onEdit: false, // propiedad que cambiará cuando se active switch de edición
                 //data ficha
                 isSaving: false, // flag para ver si se guardó la información y no repetirse
@@ -55,17 +56,31 @@
 
             }
         },
+        created() {
+            this.validateFichaStructure();     
+        },
         mounted() {
             this.initializeSelectedOptions();
             this.setDataFicha(this.ficha);
             this.getTemplates(); 
-            console.log("FICHA: ",this.ficha);
+            
             
         },
         computed: {
+            groupedItems() {
+                const groups = {};
+                this.updatedFicha.forEach(detail => {
+                    if (!groups[detail.parametro.id]) {
+                        groups[detail.parametro.id] = [];
+                    }
+                    groups[detail.parametro.id].push(detail);
+                });
+                return groups;
+            },
+
             sortedItems() {
-                console.log("ficha detalle: ",this.ficha);
-                const sortedDetail = this.ficha.detalle.slice().sort((a, b) => {   
+                console.log(this.updatedFicha);
+                const sortedDetail = this.updatedFicha.slice().sort((a, b) => {   
                     const actTemplateA = this.getActualTemplate(a.parametro.template);  
                     const actTemplateB = this.getActualTemplate(b.parametro.template);  
 
@@ -76,6 +91,12 @@
             },
         },
         methods: {
+            validateFichaStructure() {
+                this.updatedFicha = this.ficha.detalle.filter(
+                    detail => this.getActualTemplate(detail.parametro.template) !== undefined
+                )
+                console.log("validate: ", this.updatedFicha); 
+            },
             async getTemplates() {
                 try {
                     const response = await axios.get(
@@ -92,7 +113,7 @@
                     );
                     
                     this.template = response.data[0];
-                    console.log(this.template);
+                    
                     
                 } catch (error) {
                     console.error('Error en la solicitud a la API:', error);
@@ -124,7 +145,7 @@
                 this.fecha_ingreso = ficha.fecha_ingreso;
                 this.fecha_sentencia = ficha.fecha_sentencia; 
                 this.fecha_acuerdo = ficha.fecha_acuerdo; 
-                console.log("ficha en setDataFicha: ", ficha)
+                
                 ficha.detalle.forEach(detail => {
                     if (detail.tipo === 1 || detail.tipo === 3) {
                         this.values.textInputs[detail.parametro.id] = detail.valor;
@@ -143,22 +164,25 @@
             changeEditMode() {
                 //this.tagOptions = []; 
                 this.onEdit = !this.onEdit;
-                this.ficha.detalle.forEach(detail => {
+                this.updatedFicha.forEach(detail => {
                     if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id === null) {  
                         this.tagOptions[detail.parametro.id] = [];   
                         detail.detalle_multiple.forEach(option => {
                             this.tagOptions[detail.parametro.id].push(option.valor); 
-                            console.log('tag: ', this.tagOptions[detail.parametro.id]); 
+                             
                         });
                     
                     } else if (detail.tipo === 4) {
+                        if (!this.fixedArrayValues[detail.parametro.id]) {
+                            this.fixedArrayValues[detail.parametro.id] = {}; // Asegurarse de que el objeto esté inicializado
+                        }
                         detail.detalle_multiple.forEach(option => {
-                            console.log('option: ',option);
+                            console.log('option: ', option);
                             this.fixedArrayValues[detail.parametro.id][option.link] = option.valor; 
-                            console.log('precepto: ',this.fixedArrayValues)
-                            //console.log('precepto: ',this.fixedArrayValues[detail.parametro.id]); 
-                            
-                        })
+                            console.log('precepto: ', this.fixedArrayValues);
+                        });
+
+                        
                         
                     }
                 });
@@ -178,12 +202,12 @@
                             valor: detail
                         })
                     })
-                    console.log("en single input: ", this.fichaDetalle); 
+                    
                 } 
                 
             },
             setMultipleInput(multipleInput) {
-                console.log("multiple input: ", multipleInput)
+                
                 if(multipleInput) {
                     for (let key in multipleInput) {
                         let value = multipleInput[key]; 
@@ -390,9 +414,38 @@
         </CCardHeader>
         <CCardBody>
             <CCardTitle>Ingreso de datos de ficha</CCardTitle>
-            
             <CForm class="mt-4">
-                <div v-for="field in ficha.detalle" :key="field.id" class="mb-3">
+                <div v-for="(fields, parametroId) in groupedItems" :key="parametroId" class="mb-3">
+                    <div v-if="fields.length > 1">
+                        <label>{{ fields[0].parametro.nombre }}</label>
+                        <ArrayFixedInputEdit
+                            @filterFixedArray="handleFixedArray"
+                            :disabled="!onEdit"
+                            :dataTypeId="fields[0].parametro.tipodato_id"
+                            :parameterName="fields[0].parametro.nombre"
+                            :parameterId="fields[0].parametro.id"
+                            :selectedInputs="fields.map(field => fixedArrayValues[field.parametro.id])"
+                        />
+                    </div>
+                    <!-- Other field types -->
+                    <div v-else>
+                        <div v-if="fields[0].tipo === 1">
+                            <label>{{ fields[0].parametro.nombre }}</label>
+                            <template v-if="fields[0].parametro.tipoparametro_id === 1">
+                                <CFormInput
+                                    placeholder="Complete este campo..."
+                                    v-model="values.textInputs[fields[0].parametro.id]"
+                                    :disabled="!onEdit"
+                                ></CFormInput>
+                            </template>
+                        </div>
+                    </div>
+                    <!-- Add other cases for field.tipo === 2, field.tipo === 3, etc. -->
+                </div>
+            </CForm>
+
+            <!-- <CForm class="mt-4">
+                <div v-for="field in updatedFicha" :key="field.id" class="mb-3">
                     <div v-if="field.tipo === 1">
                         <label>{{ field.parametro.nombre }}</label>
                         <template v-if="field.parametro.tipoparametro_id === 1">
@@ -435,6 +488,7 @@
                        
                     </div>
                     <div v-else-if="field.parametro.tipoparametro_id === 4">
+
                         <ArrayFixedInputEdit
                             @filterFixedArray="handleFixedArray"
                             :disabled="!onEdit"
@@ -446,7 +500,7 @@
                     </div>
                     
                 </div>
-            </CForm> 
+            </CForm>  -->
             <CButton color="dark" @click="submitForm">Guardar</CButton>
         </CCardBody>
         </CCard>

@@ -36,10 +36,10 @@
             console.log(selectedInputs);
             
             watchEffect(() => {
-                console.log('selected inputS: ',props.selectedInputs);
+                console.log('selected inputS: ', props.selectedInputs);
                 if (props.selectedInputs) {
                     rowsPreceptoLegal.value = { ...props.selectedInputs };
-                     
+                    console.log('rows: ', rowsPreceptoLegal.value);                      
                 }
             }); 
             onMounted(async () => {
@@ -163,7 +163,7 @@
         </CCardHeader>
         <CCardBody>
             
-            <CRow v-for="(row, index) in rowsPreceptoLegal" :key="index" class="mt-2">
+            <!-- <CRow v-for="(row, index) in rowsPreceptoLegal" :key="index" class="mt-2">
                 <CCol>
                     <label class="">{{ cuerpoLegalContent.nombre }}</label>
                     <v-select
@@ -204,7 +204,7 @@
                     />
             </CButton>
                 </CCol>
-            </CRow>
+            </CRow> -->
                     
         </CCardBody>
     </CCard>

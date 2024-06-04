@@ -67,7 +67,6 @@
                     id: null,
                     name: '',
                     email: '',
-                    roles: [],
                     ldap: 0,
                 },
                 isTypeSelected: false,

@@ -18,28 +18,50 @@
             }
             
         }, 
+        /* En el proceso de modificar un template y eliminar campos 
+        que existen en fichas con el template no actualizado se producen
+        errores de renderización. Se renderiza la vista de la ficha con la variable 
+        updatedFicha, que obtendrá la data de los campos actualizados prescindiendo 
+        de los campos eliminados que existían en la ficha antigua. */ 
         data() {
             return {
-                fichas: this.$store.state.ficha
+                fichas: this.$store.state.ficha,
+                updatedFicha: null
             }
+        },
+        created() {
+            this.validateFichaStructure(); 
         },
         mounted() {
             console.log(this.fichas);
+            
             //this.sortedItems();  
         },
         computed: {
+             
             sortedItems() {
-                const sortedDetail = this.fichas.detalle.slice().sort((a, b) => {   
+                const sortedDetail = this.updatedFicha.slice().sort((a, b) => {   
                     const actTemplateA = this.getActualTemplate(a.parametro.template);  
                     const actTemplateB = this.getActualTemplate(b.parametro.template);  
 
                     return actTemplateA.pivot.prioridad - actTemplateB.pivot.prioridad; 
                 });
+                /* const sortedDetail = this.fichas.detalle.slice().sort((a, b) => {   
+                    const actTemplateA = this.getActualTemplate(a.parametro.template);  
+                    const actTemplateB = this.getActualTemplate(b.parametro.template);  
+
+                    return actTemplateA.pivot.prioridad - actTemplateB.pivot.prioridad; 
+                }); */
 
                 return sortedDetail; 
             },
         },  
         methods: {
+            validateFichaStructure() { 
+                this.updatedFicha = this.fichas.detalle.filter(
+                    detail => this.getActualTemplate(detail.parametro.template) !== undefined
+                )
+            },
             getActualTemplate(template) {
                 const templateId = this.fichas.template_id; 
                 return template.find(elem => elem.id === templateId); 
