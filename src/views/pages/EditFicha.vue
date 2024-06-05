@@ -63,8 +63,6 @@
             this.initializeSelectedOptions();
             this.setDataFicha(this.ficha);
             this.getTemplates(); 
-            
-            
         },
         computed: {
             groupedItems() {
@@ -75,6 +73,7 @@
                     }
                     groups[detail.parametro.id].push(detail);
                 });
+                console.log("groups: ", groups);
                 return groups;
             },
 
@@ -174,8 +173,9 @@
                     
                     } else if (detail.tipo === 4) {
                         if (!this.fixedArrayValues[detail.parametro.id]) {
-                            this.fixedArrayValues[detail.parametro.id] = {}; // Asegurarse de que el objeto esté inicializado
+                            this.fixedArrayValues[detail.parametro.id] = {}; // Asegurarse de que el objeto esté inicializado    
                         }
+                        console.log('DETALLE MULTIPLE: ', detail); 
                         detail.detalle_multiple.forEach(option => {
                             console.log('option: ', option);
                             this.fixedArrayValues[detail.parametro.id][option.link] = option.valor; 
@@ -416,7 +416,7 @@
             <CCardTitle>Ingreso de datos de ficha</CCardTitle>
             <CForm class="mt-4">
                 <div v-for="(fields, parametroId) in groupedItems" :key="parametroId" class="mb-3">
-                    <div v-if="fields.length > 1">
+                    <div v-if="fields.length > 1 || fields[0].tipo === 4">
                         <label>{{ fields[0].parametro.nombre }}</label>
                         <ArrayFixedInputEdit
                             @filterFixedArray="handleFixedArray"
@@ -424,21 +424,39 @@
                             :dataTypeId="fields[0].parametro.tipodato_id"
                             :parameterName="fields[0].parametro.nombre"
                             :parameterId="fields[0].parametro.id"
-                            :selectedInputs="fields.map(field => fixedArrayValues[field.parametro.id])"
+                            :selectedInputs="fields"
                         />
                     </div>
                     <!-- Other field types -->
-                    <div v-else>
-                        <div v-if="fields[0].tipo === 1">
+                    <div v-else-if="fields[0].tipo === 1">
                             <label>{{ fields[0].parametro.nombre }}</label>
                             <template v-if="fields[0].parametro.tipoparametro_id === 1">
                                 <CFormInput
                                     placeholder="Complete este campo..."
                                     v-model="values.textInputs[fields[0].parametro.id]"
                                     :disabled="!onEdit"
-                                ></CFormInput>
+                                ></CFormInput> 
                             </template>
-                        </div>
+                        
+                    </div>
+                    <div v-else-if="fields[0].tipo === 3">
+                        <label>{{ fields[0].parametro.nombre }}</label>
+                        <CFormTextarea
+                            v-model="values.textInputs[fields[0].parametro.id]"
+                            placeholder="Complete este campo" 
+                            rows="5"
+                            :disabled="!onEdit"
+                        ></CFormTextarea>
+                         
+                    </div>
+                    <div v-else-if="fields[0].tipo === 2 && fields[0].parametro.tipodato_id === null">
+                        <label> {{ fields[0].parametro.nombre }} (Para agregar presione Enter) </label>
+                        <TagInputEditFicha
+                            :parameterId="fields[0].parametro.id"
+                            :selectedTags="tagOptions[fields[0].parametro.id]"
+                            :disabled="!onEdit"
+                            @filterTags="handleTagInput"
+                        /> 
                     </div>
                     <!-- Add other cases for field.tipo === 2, field.tipo === 3, etc. -->
                 </div>

@@ -73,6 +73,12 @@
         </div>
       </div>
     </section>
+    <ToastNotification
+            v-if="showNotification"
+            :type="getResultType()"
+            :duration="duration"
+            :message="getResultMsg()" 
+    />
   </template>
     
 
@@ -84,6 +90,7 @@ import { required, email } from '@vuelidate/validators'
 import SubmitButton from '@/components/SubmitButton.vue'
 import logoTC from '@/assets/brand/logo-tc.jpg';
 import sideLoginImage from '@/assets/images/tc_2.png'
+import ToastNotification from '../../components/ToastNotification.vue';
 
 
 export default {
@@ -98,7 +105,8 @@ export default {
         }
     },
     components: {
-        SubmitButton
+        SubmitButton,
+        ToastNotification
     },
     data() {
         return {
@@ -108,7 +116,12 @@ export default {
             },
             errorMsg: '', 
             showError: false,
-            isSendingForm: false, 
+            isSendingForm: false,
+            duration: 2000,
+            resultMsg: '',
+            actionSuccess: false,
+            showNotification: false,
+            response: null
         
         }
     },
@@ -127,6 +140,16 @@ export default {
         }
     },
     methods: {
+        restoreInitialData() {
+                this.actionSuccess = false; 
+                this.showNotification = false; 
+        },
+        getResultType() {
+            return this.actionSuccess ? 'success' : 'error'; 
+        },
+        getResultMsg() {
+            return this.actionSuccess ? `Bienvenido ${this.response.name}` : this.handleErrors(this.response); 
+        }, 
         setTouched(theModel) {
             if(theModel == 'username' || theModel == 'all' )
                 {this.v$.form.username.$touch()}
@@ -137,26 +160,27 @@ export default {
         },
 
         handleErrors(error) { 
-            console.log("Error: ", error);
-            this.showError=true;
+            console.log("Error: ", this.response);
+            
             const statusCode = error.response.status; 
+            console.log(statusCode); 
             
             if (error instanceof AxiosError && error.response) {
                 if (statusCode == 404) {    
-                    this.errorMsg = "No se encontró el recurso solicitado."
+                    return "No se encontró el recurso solicitado."
                 
                 } else if (statusCode == 401) {
-                    this.errorMsg = "Email y/o Contraseña inválida."
+                    return "Email y/o Contraseña inválida."
                 
                 } else if (statusCode == 500) {
-                    this.errorMsg = "Error del servidor: Ha ocurrido un error interno en el servidor."
+                    return "Error del servidor: Ha ocurrido un error interno en el servidor."
                 }
 
             } else if (error.request) {
-                this.errorMsg = "No se recibió respuesta del servidor.";
+                return "No se recibió respuesta del servidor.";
 
             } else {
-                this.errorMsg = "Ha ocurrido un error: " + error; 
+                return "Ha ocurrido un error: " + error; 
             }
             this.isSendingForm = false;
         },
@@ -179,8 +203,15 @@ export default {
                     })
                 .then((response) => {
                     let resp = response.data; 
-                    console.log("RESP: ",resp);
-                   
+                    this.response = resp; 
+                    console.log(response); 
+
+                    this.actionSuccess = true;
+                    this.showNotification = true;
+                    setTimeout(() => {
+                        this.showNotification = false;
+                    }, this.duration);
+                    
                     this.$store.commit('saveLogin',
                     {
                         "token":resp.access_token,
@@ -191,8 +222,17 @@ export default {
                     this.isSendingForm = false;
             
                 })
-                .catch( (error) => {
-                    this.handleErrors(error); 
+                .catch((error) => {
+                  this.response = error; 
+                  this.actionSuccess = false;
+                        this.showNotification = true; 
+                        
+                        setTimeout(() => {
+                            this.showNotification = false;
+                            this.restoreInitialData();
+                            //    this.closeModal(); 
+                  }, this.duration);
+                  
                     
                 });
             

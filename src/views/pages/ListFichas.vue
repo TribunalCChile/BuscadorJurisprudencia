@@ -38,7 +38,7 @@
                 totalPages: 1,
                 sortBy: 'id',
                 descending: false,
-                rowsPerPage: 10,
+                rowsPerPage: 8,
                 dataTypes: [],
                 filteredStates: [],
                 states: [

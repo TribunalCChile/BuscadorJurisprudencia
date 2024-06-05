@@ -186,7 +186,7 @@
                 <CCol>
                     <CCardTitle>
                         {{ fichas.nombre }}
-                        <CButton 
+                        <!-- <CButton 
                             color="primary" 
                             class="mx-3" 
                             @click="exportToPDF(fichas)"
@@ -194,9 +194,9 @@
                                 content: 'Descargar ficha en formato PDF', 
                                 placement: 'top'
                             }"
-                        >
+                        > 
                             <CIcon  :icon="icon.cilDataTransferDown" size="md"/>
-                        </CButton>
+                        </CButton>-->
                     </CCardTitle>
                 </CCol>
                 
