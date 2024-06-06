@@ -127,12 +127,14 @@
             },      
             initializeSelectedOptions() {
                 this.ficha.detalle.forEach(detail => {
+                    //console.log("detail: ", detail);
                     if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id !== null) {    
                         this.selectedOptions[detail.parametro.id] = [];
                     } else if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id === null) {    
                         this.tagOptions[detail.parametro.id] = [];
                     } else if (detail.parametro.tipoparametro_id === 4) {
-                        this.fixedArrayValues[detail.parametro.id] = {}; 
+                        this.fixedArrayValues[detail.parametro.id] = [];
+
                     }
                     
                 });
@@ -162,32 +164,49 @@
             },
             changeEditMode() {
                 //this.tagOptions = []; 
+                let groups = this.groupedItems; 
+                console.log("groups: ", groups);
                 this.onEdit = !this.onEdit;
-                this.updatedFicha.forEach(detail => {
-                    if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id === null) {  
-                        this.tagOptions[detail.parametro.id] = [];   
-                        detail.detalle_multiple.forEach(option => {
-                            this.tagOptions[detail.parametro.id].push(option.valor); 
-                             
-                        });
+                
+                for(const group in groups) {
+                    if (groups[group].length > 1) {
+                        console.log(groups[group]); 
+                        this.fixedArrayValues[groups[group][0].parametro_id] = groups[group]; 
+                        console.log('group: ',this.fixedArrayValues);
                     
-                    } else if (detail.tipo === 4) {
+                    } else {
+                        
+                        groups[group].forEach(detail => {
+                            if (detail.parametro.tipoparametro_id === 2 && detail.parametro.tipodato_id === null) {  
+                                this.tagOptions[detail.parametro.id] = [];   
+                                detail.detalle_multiple.forEach(option => {
+                                    this.tagOptions[detail.parametro.id].push(option.valor);  
+                                })
+                            }    
+                        }) 
+                
+                    }
+                
+                    
+                  /*   } else if (detail.tipo === 4) {
                         if (!this.fixedArrayValues[detail.parametro.id]) {
                             this.fixedArrayValues[detail.parametro.id] = {}; // Asegurarse de que el objeto esté inicializado    
-                        }
-                        console.log('DETALLE MULTIPLE: ', detail); 
-                        detail.detalle_multiple.forEach(option => {
+                        } */
+
+                        //console.log('DETALLE MULTIPLE: ', detail); 
+                        /* detail.detalle_multiple.forEach(option => {
                             console.log('option: ', option);
-                            this.fixedArrayValues[detail.parametro.id][option.link] = option.valor; 
+                            this.fixedArrayValues[detail.parametro.id]  
                             console.log('precepto: ', this.fixedArrayValues);
-                        });
+                        }); */
 
                         
                         
-                    }
-                });
+               /*      }
+                }); */
 
-                
+                }
+            
               
                 
             },
@@ -231,24 +250,35 @@
                 
             },
             setFixedArrayInput(fixedArray) {
+                
                 if (fixedArray) {
                     for (let key in fixedArray) {
-                        let value = fixedArray[key];
-                        let fixedArrayMultiple = [];
-
-                        for (let item in value){
-                            fixedArrayMultiple.push({
-                                valor: value[item],
-                                link: item
-                            })
+                        let preceptosByParameter = fixedArray[key];
+                        for (let precepto in preceptosByParameter) {
+                            let actualPrecepto = preceptosByParameter[precepto]
+                            let fixedArrayMultiple = [];
+                            console.log("actul precepto: ", actualPrecepto)
+                            for (let item in actualPrecepto){
+                                console.log("item: ", item); 
+                                fixedArrayMultiple.push({
+                                    valor: actualPrecepto[item],
+                                    link: item
+                                })
+                            }
+                            this.fichaDetalle.push({
+                                parametro_id: key,
+                                tipo: 4,
+                                valor:null,
+                                detalleMultiple: fixedArrayMultiple
+                            });
                         }
-                        console.log('fixedarraymultiple: ',fixedArrayMultiple)
-                        this.fichaDetalle.push({
+                    
+                        /* this.fichaDetalle.push({
                             parametro_id: key,
                             tipo: 4,
                             valor:null,
                             detalleMultiple: fixedArrayMultiple
-                        });
+                        }); */
                     }
                     
                 }
@@ -260,9 +290,8 @@
                 
             },
             async submitForm() {
-                if (this.isSaving) {
-                    return; 
-                }
+                this.fichaDetalle = []; 
+               
 
                 this.setSingleInput(this.values.textInputs); 
                 this.setMultipleInput(this.selectedOptions);
@@ -324,7 +353,7 @@
                         }, this.duration);
                        
                     } 
-                }    
+                }     
             },
             getResultType() {
                 return this.actionSuccess ? 'success' : 'error'; 
@@ -457,6 +486,18 @@
                             :disabled="!onEdit"
                             @filterTags="handleTagInput"
                         /> 
+                    </div>
+                    <div v-else-if="fields[0].parametro.tipoparametro_id === 2 && fields[0].parametro.tipodato_id !== null">
+                        <input type="hidden" id=""></input>
+                        <label class="mt-3">{{ fields[0].parametro.nombre }}</label> 
+                        <MultiSelectInputEditFicha
+                            :selectedOptions="selectedOptions[fields[0].parametro.id]"
+                            @filterMultiSelect="handleMultiSelect"
+                            :disabled="!onEdit"
+                            :dataTypeId="fields[0].parametro.tipodato_id"
+                            :parameterId="fields[0].parametro.id"
+                        /> 
+                       
                     </div>
                     <!-- Add other cases for field.tipo === 2, field.tipo === 3, etc. -->
                 </div>

@@ -1,7 +1,7 @@
 <script>
     import axios from 'axios'; 
     import { useStore } from 'vuex'
-    import { computed, onMounted, ref, watch, watchEffect } from 'vue';
+    import { computed, onMounted, ref, watch, watchEffect, toRefs } from 'vue';
     import { CIcon } from '@coreui/icons-vue';
     import * as icon from '@coreui/icons';
 
@@ -29,19 +29,12 @@
             const dataTypeId = props.dataTypeId; 
             const parameterName = props.parameterName;
             const parameterId = props.parameterId;
-            const selectedInputs = props.selectedInputs; 
+            //const selectedInputs = props.selectedInputs; 
             const disabled = props.disabled;
+            
+            const { selectedInputs } = toRefs(props); 
+            
              
-            
-            console.log(selectedInputs);
-            
-            /* watchEffect(() => {
-                console.log('selected inputS: ', props.selectedInputs);
-                if (props.selectedInputs) {
-                    rowsPreceptoLegal.value = [...props.selectedInputs ];
-                    console.log('rows: ', rowsPreceptoLegal.value);                      
-                }
-            });  */
             onMounted(async () => {
                 /* async y await para que primero se llamen las api y luego llenar los rows */ 
                 await getDataTypeContent();
@@ -49,19 +42,12 @@
                 initializeRows(); 
                 
             })
-
-            watch(rowsPreceptoLegal, (newInputs, oldInputs) => {
-                filterFixedArray(newInputs);
-            }, { deep: true });
-
-            const initializeRows = () => {
-                addRowPreceptoLegal(); 
-                console.log("primera vez de row precepto legal: ", rowsPreceptoLegal.value)
-                
-            } 
             const addRowPreceptoLegal = () => {
-                if (props.selectedInputs) {
-                    props.selectedInputs.forEach(row => {
+                //console.log(selectedInputs.value.length);
+                if (selectedInputs.value && selectedInputs.value.length > 0) {
+                    console.log("Tengo un valor");
+                    console.log("selected inputs dentro: ", selectedInputs.value);
+                    selectedInputs.value.forEach(row => {
                         let cuerpoLegal = row.detalle_multiple.find(inputRow => inputRow.link === 'Cuerpo Legal').valor;
                         
                         const newRow = {
@@ -79,6 +65,33 @@
                 }
                 
             }
+
+            const addNewRowPreceptoLegal = () => {
+                const newRow = {
+                    'Cuerpo Legal': '',
+                    ...Object.fromEntries(dataTypeContent.value.tipo_dato_contenido.map(datatype => [datatype.nombre, '']))
+                }
+                rowsPreceptoLegal.value.push(newRow); 
+                console.log(rowsPreceptoLegal.value);
+            }
+            
+           
+            watch(selectedInputs, (newInputs, oldInputs) => {
+                addRowPreceptoLegal(newInputs);  
+            }, { deep: true });
+            
+            watch(rowsPreceptoLegal, (newInputs, oldInputs) => {
+                filterFixedArray(oldInputs,newInputs);
+            }, { deep: true });
+
+            const initializeRows = () => {
+                addRowPreceptoLegal(); 
+                console.log("primera vez de row precepto legal: ", rowsPreceptoLegal.value)
+                
+            } 
+            
+
+            
 
             const removeRowPreceptoLegal = (indexElem) => { 
                 rowsPreceptoLegal.value = rowsPreceptoLegal.value.filter((row, index) => index !== indexElem);
@@ -132,10 +145,12 @@
                  
             }
 
-            function filterFixedArray(value) {
+            function filterFixedArray(oldValues, newValues) {
+                //console.log('old: ', oldValues);
+                //console.log('new: ', newValues);  
                 context.emit('filterFixedArray', {
                     parameterId: parameterId,
-                    values: rowsPreceptoLegal.value[0],
+                    values: rowsPreceptoLegal.value,
                 })      
 
                 
@@ -154,7 +169,9 @@
                 isHoverAdd,
                 rowsPreceptoLegal,
                 addRowPreceptoLegal,
+                addNewRowPreceptoLegal,
                 removeRowPreceptoLegal,
+
             }
         }
     }
@@ -166,7 +183,7 @@
             <span>{{ parameterName }}</span>
             <CButton 
                 variant="outline"
-                @click="addRowPreceptoLegal"
+                @click="addNewRowPreceptoLegal"
                 ><CIcon 
                     :icon="icon.cilPlus" 
                     size="lg"
