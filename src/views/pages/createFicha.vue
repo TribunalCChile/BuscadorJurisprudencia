@@ -8,6 +8,7 @@
     import "smart-tagz/dist/smart-tagz.css";
     import ToastNotification from '../../components/ToastNotification.vue';
     import DatePicker from '../../components/DatePicker.vue';
+    import FichaCreateFlow from '../../components/FichaCreateFlow.vue';
 
     export default {
         name: 'Crear Ficha',
@@ -19,6 +20,7 @@
             ToastNotification,
             DatePicker,
             ArrayFixedInput,
+            FichaCreateFlow
 
         },
         data() {
@@ -332,6 +334,8 @@
 
 
 <template>
+    <FichaCreateFlow />
+
     <CCard>
 
         <CCardHeader>
@@ -447,6 +451,7 @@
                             :parameter="parameter"
                             @filterMultiSelect="handleMultiSelect"
                             :isEdit="false"
+                            :selectable="() => multiSelectOptions.length < 20"
                             
                         />
                     </div>

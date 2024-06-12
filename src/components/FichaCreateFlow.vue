@@ -3,36 +3,36 @@
     import { useStore } from 'vuex'
     import { CIcon } from '@coreui/icons-vue';
     import * as icon from '@coreui/icons';
+    import { useRoute } from 'vue-router'; 
 
     export default {
         name: 'Flujo Creación Ficha',
-        props: {
+        setup(props) {
+            const route = useRoute(); 
             
-        },
-        components: {
-
-        },
-        setup() {
-            const isActive = ref(true);
+            const isActive = (path) => {
+                return route.path.split('/')[1] === path; 
+            } 
             return {
-                isActive
+                isActive,
+                route,
             } 
         }
     }
 </script>
 
 <template>
-    <CNav variant="pills" layout="justified">
+    <CNav variant="underline-border" layout="justified">
         <CNavItem>
-            <CNavLink href="#" :class="{'custom-active': isActive}">
+            <CNavLink href="#" :class="{'custom-active': isActive('parametros')}">
                 Crear Template
             </CNavLink>
         </CNavItem>
         <CNavItem>
-            <CNavLink href="#">Crear Ficha</CNavLink>
+            <CNavLink href="#" :class="{'custom-active': isActive('crear-ficha')}">Crear Ficha</CNavLink>
         </CNavItem>
         <CNavItem>
-            <CNavLink href="#">Ver Ficha</CNavLink>
+            <CNavLink href="#" id="fichaView" :class="{'custom-active': isActive('ver-ficha')}">Ver Ficha</CNavLink>
         </CNavItem>
         
     </CNav>
@@ -41,9 +41,9 @@
 <style>
 
 .custom-active {
-    background-color: #212631;
+    background-color: #3DAD5B;
     color: #ffffff; 
-    border-color: #212631; 
+    border-color: #3DAD5B; 
 }
 .custom-active:hover,
 .custom-active:focus,

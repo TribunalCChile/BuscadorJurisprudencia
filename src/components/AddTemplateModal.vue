@@ -189,7 +189,7 @@
                     );
                     
                     this.templateData = response.data;
-                    
+                    console.log("templatedatea; ", this.templateData)
                 
                 } catch (error) {
                     console.error('Error en la solicitud a la API:', error);
@@ -253,19 +253,31 @@
                                 }
                             }
                         )
-                        console.log(response); 
+                        console.log(response.data); 
+                        
                         this.closeModal(); // Cerrar el modal primero
-        
+                        
+                        /*              
+                        this.$store.commit("createTemplate", template);
+                                this.$router.push({
+                                    name: 'Crear Ficha',
+                                    params: {
+                                        idTemplate: response.data.data.id
+                                    }
+                                })  */
+                         
                         setTimeout(() => {
                             this.actionSuccess = true;
                             this.showNotification = true;
                             setTimeout(() => {
+                                
                                 this.showNotification = false;
                             }, this.duration);
                         }, 0);
                         
 
                     } catch (error) {
+                        console.log(error); 
                         this.actionSuccess = false;
                         this.showNotification = true; 
 

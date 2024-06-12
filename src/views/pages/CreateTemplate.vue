@@ -1,5 +1,7 @@
 <template>
-    <!-- <FichaCreateFlow /> -->
+    <FichaCreateFlow 
+        activePath="/parametros"
+    />
     <div class="mt-3 mb-3">
         <SearchBarFilter @search="handleSearch" placeholder="Buscar parámetro..." />
     

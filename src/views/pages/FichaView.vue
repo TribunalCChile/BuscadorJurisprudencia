@@ -3,6 +3,8 @@
     import * as icon from '@coreui/icons';
     import * as XLSX from 'xlsx';
     import { jsPDF } from "jspdf";
+    import FichaCreateFlow from '../../components/FichaCreateFlow.vue';
+    
     //import pdfMake from 'pdfmake/build/pdfmake';
     //import pdfFonts from 'pdfmake/build/vfs_fonts';
     //pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -11,6 +13,7 @@
         nombre: 'Vista de Ficha',
         components: {
             CIcon,
+            FichaCreateFlow
         },
         setup() {
             return {
@@ -34,7 +37,7 @@
         },
         mounted() {
             console.log(this.fichas);
-            
+            console.log("ruta: ", this.$route.path.split('/')[1])
             //this.sortedItems();  
         },
         computed: {
@@ -173,6 +176,7 @@
 </script>
 
 <template>
+    <FichaCreateFlow />
     <CCard>
         <CCardHeader>Ficha: <b>{{ fichas.nombre }}</b>
             <CBadge 
