@@ -115,7 +115,8 @@
                 resultMsg: '',
                 resultType:'',
                 duration: 1500,
-                templateData: []
+                templateData: [],
+                templateToSend: [],
                 
             }
         },
@@ -189,12 +190,13 @@
                     );
                     
                     this.templateData = response.data;
+                    
                     console.log("templatedatea; ", this.templateData)
-                
+                    return this.templateData;
+
                 } catch (error) {
                     console.error('Error en la solicitud a la API:', error);
-                    this.failMsg = 'Error al obtener templates.'; 
-                    this.fail = true;
+                    throw error; 
                 }
 
             },
@@ -256,15 +258,17 @@
                         console.log(response.data); 
                         
                         this.closeModal(); // Cerrar el modal primero
-                        
-                        /*              
-                        this.$store.commit("createTemplate", template);
-                                this.$router.push({
-                                    name: 'Crear Ficha',
-                                    params: {
-                                        idTemplate: response.data.data.id
-                                    }
-                                })  */
+                        console.log(response.data.data.id)
+                        const templateToSend = await this.getTemplateData(response.data.data.id); 
+                        console.log("template send: ", templateToSend); 
+             
+                        this.$store.commit("createTemplate", templateToSend[0]);
+                        this.$router.push({
+                            name: 'Crear Ficha',
+                            params: {
+                                idTemplate: response.data.data.id
+                            }
+                        })  
                          
                         setTimeout(() => {
                             this.actionSuccess = true;

@@ -13,7 +13,7 @@
         nombre: 'Vista de Ficha',
         components: {
             CIcon,
-            FichaCreateFlow
+            FichaCreateFlow 
         },
         setup() {
             return {
@@ -168,6 +168,12 @@
                     case 3:
                         return 'Anulado'; 
                 }
+            },
+
+            backToFichas() {
+                this.$router.push({ 
+                    name: 'Listar Fichas', 
+                });
             }
         },
         
@@ -178,7 +184,23 @@
 <template>
     <FichaCreateFlow />
     <CCard>
-        <CCardHeader>Ficha: <b>{{ fichas.nombre }}</b>
+
+        <CCardHeader class="d-flex">
+            <div>
+                <CButton
+                    @click="backToFichas"
+                    color="link"
+                    v-c-tooltip="{content: 'Volver a fichas', placement: 'top'}"
+                >
+                    <CIcon :icon="icon.cilArrowLeft" size="lg" class=""/>
+                    
+                    
+                </CButton>
+            </div>
+            <div class="mt-1">Ficha: <b>{{ fichas.nombre }}</b></div>
+            
+            
+            
             <CBadge 
                 v-bind:class="setBadgeColor(fichas.estado)"
                 style="margin-left: 0.7rem;"
@@ -275,4 +297,6 @@
     padding: 8px;
     text-align: left;
   }
+
+
 </style>

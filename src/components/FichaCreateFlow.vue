@@ -22,7 +22,7 @@
 </script>
 
 <template>
-    <CNav variant="underline-border" layout="justified">
+    <CNav variant="underline-border" layout="justified" class="mb-4">
         <CNavItem>
             <CNavLink href="#" :class="{'custom-active': isActive('parametros')}">
                 Crear Template

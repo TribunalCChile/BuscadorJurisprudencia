@@ -69,6 +69,10 @@
             console.log("template en create ficha: ", this.template);
             
         },
+
+        watch: {
+            
+        },
         computed: {
             sortedItems() {
                 return this.template.parametro.slice().sort((a, b) => {
@@ -211,19 +215,40 @@
                 }
             }, 
 
+            async getFichaData(id) {
+                try {
+                    const response = await axios.get(
+                        this.$store.state.backendUrl + '/ficha',
+                        { 
+                            params: {
+                                filter: JSON.stringify({'id': id})
+                            },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: 'Bearer ' + this.$store.state.token,
+                            }
+                        }
+                    );
+                    console.log("RESPONSE FICHAS: ",response.data);
+                    return response.data; 
+                    
+                } catch (error) {
+                    console.error('Error en la solicitud a la API:', error);
+                    throw error; 
+                }
+            },
             async submitForm() {
                 /* En el futuro espero poder encontrar una mejor forma
                 de validar que no se guarden repetidamente los elementos cuando haya error.
                 De momento lo dejo hardcodeado */ 
-
+                
+                
                 this.fichaDetalle = []; 
-
-                if(!this.isSaving) {
-                    this.setSingleInput(this.values.textInputs); 
-                    this.setMultipleInput(this.multiSelectOptions);
-                    this.setMultipleInput(this.tagsOptions);
-                    this.setFixedArrayInput(this.fixedArrayValues);
-                }
+                this.setSingleInput(this.values.textInputs); 
+                this.setMultipleInput(this.multiSelectOptions);
+                this.setMultipleInput(this.tagsOptions);
+                this.setFixedArrayInput(this.fixedArrayValues);
+                
 
                 this.ficha = {
                         codigo: this.template.codigo,
@@ -254,24 +279,29 @@
                                 }
                             )
                         console.log(response.data);
-                        //this.closeModal(); // Cerrar el modal primero
+                        
                         this.actionSuccess = true;
-                            this.showNotification = true;
-                            setTimeout(() => {
-                                this.showNotification = false;
-                            }, this.duration);
+                        this.showNotification = true;
+                        setTimeout(() => {
+                            this.showNotification = false;
+                        }, this.duration);
                             
-                            this.isSaving = true;
-                            this.$router.push({
-                                name: 'Listar Fichas'
-                            });
+                        
+
+                        const fichaToSend = await this.getFichaData(response.data.data.id); 
+                        this.$store.commit("watchFicha", fichaToSend[0]);
+                        this.$router.push({
+                            name: 'Vista de Ficha',
+                            params: {
+                                fichaId: fichaToSend[0].id
+                            }
+                        })  
                          
 
                     } catch(error) {
                         this.actionSuccess = false;
                         this.showNotification = true; 
-                        this.isSaving = true; 
-
+                       
                         if (error.response && error.response.data && error.response.data.errors) {
                             const errors = error.response.data.errors; 
                             this.errorMsg = Object.values(errors).join('\n');
