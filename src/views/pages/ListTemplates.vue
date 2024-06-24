@@ -4,6 +4,7 @@
     import * as icon from '@coreui/icons';
     import DeleteTemplateModal from '../../components/DeleteTemplateModal.vue';
     import SearchBarFilter from '../../components/SearchBarFilter.vue';
+    import ResolutionTypeFilter from '../../components/ResolutionTypeFilter.vue';
 
     export default {
         name: 'Listar Templates',
@@ -17,7 +18,8 @@
         components: {
             CIcon,
             DeleteTemplateModal,
-            SearchBarFilter
+            SearchBarFilter,
+            ResolutionTypeFilter,
         },
         data() {
             return {
@@ -25,6 +27,7 @@
                 showDeleteModal: false,
                 templateId: null,
                 searchFilter: '',
+                resolutionFilter: null
             }
         },
 
@@ -42,11 +45,33 @@
                     );
                 }
 
+                if (this.resolutionFilter !== '') {
+                    switch (this.resolutionFilter) {
+                        case 'STC':
+                            filterTemplates = filterTemplates.filter(template => 
+                                (template.nombre.split('-').length < 2) || 
+                                (template.nombre.split('-').length > 1 && template.nombre.split('-')[1] === 'STC') 
+                            )
+                            break; 
+                        
+                        case 'INA': 
+                            filterTemplates = filterTemplates.filter(template => 
+                                template.nombre.split('-').length > 1 && 
+                                template.nombre.split('-')[1] === 'Inadmisibilidad'
+                            )
+                            break; 
+                    }  
+                }
+
                 return filterTemplates; 
             }
         },
 
         methods: {
+            handleResolutionFilter(option) {
+                this.resolutionFilter = option; 
+                console.log(option)
+            },
             handleSearch(search) {
                 this.searchFilter = search; 
             },
@@ -117,11 +142,22 @@
 </script>
 
 <template>
+    <h4 class="text-center">Templates</h4>
+    <CRow class="mt-4">
+        <CCol class="col-9">
+            <div class="mt-2 mb-4">
+                <SearchBarFilter @search="handleSearch" placeholder="Buscar template..." />
+            </div>
+        </CCol>
+        <CCol class="col-3">
+            <ResolutionTypeFilter 
+                @filterByResolution="handleResolutionFilter"
+            />
+        </CCol>
+        
+
+    </CRow>
     
-    <div class="mt-2 mb-4">
-        <SearchBarFilter @search="handleSearch" placeholder="Buscar template..." />
-    
-    </div>
     <CRow>
         <CCol sm="4"  v-for="template in filteredTemplates" :key="template.id" class="mt-3">
         <CContainer>
@@ -131,7 +167,7 @@
                     <CListGroup flush class="mb-3">
                         <CListGroupItem>Estado: {{  getStateStr(template.estado) }}</CListGroupItem>
                     </CListGroup>
-                    <CButton color="primary"  class="mx-1" @click="useTemplate(template)">Usar</CButton>
+                    
                     <CButton color="info" variant="outline" class="mx-1"  @click="editTemplate(template)" >
                         <!-- <CIcon :icon="icon.cilColorBorder" size="md"/>  -->
                         Editar
@@ -139,6 +175,7 @@
                     <CButton color="danger" class="mx-1" @click="deleteTemplate(template)">
                         <CIcon :icon="icon.cilTrash" size="lg" class="text-white" />
                     </CButton>
+                    <CButton color="primary"  class="mx-1" @click="useTemplate(template)">Usar</CButton>
                     
                     
                 </CCardBody>

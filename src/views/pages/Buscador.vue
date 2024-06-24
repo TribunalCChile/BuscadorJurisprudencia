@@ -261,7 +261,7 @@
                     this.$store.state.backendUrl + '/buscadorfichaexterno', 
                     {
                         params: {
-                            'filter': JSON.stringify({ "search": this.searchFilter }) 
+                            filter: JSON.stringify({ "search": this.searchFilter }) 
                         },
                         headers: {
                             'Content-Type': 'application/json',

@@ -8,6 +8,7 @@
     import eyeIcon from '@/assets/icons/eye1.png';
     import EditFichaState from '../../components/EditFichaState.vue';
     import AddFichaModal from '../../components/AddFichaModal.vue'; 
+    import SearchBarFilter from '../../components/SearchBarFilter.vue';
     
 
     export default {
@@ -17,6 +18,8 @@
             DeleteFichaModal,
             EditFichaStateModal,
             AddFichaModal,
+            SearchBarFilter,
+            
         },
         setup() {
             return {
@@ -29,6 +32,7 @@
         data() {
             return {
                 fichas: [],
+                searchFilter: '',
                 showDeleteModal: false,
                 showChangeStateModal: false,
                 showAddFichaModal: false,
@@ -68,11 +72,27 @@
                     
                     return a.folio - b.folio;
                 });
+            },
+
+            filteredFichas() {
+                let filterFichas = this.fichas.data; 
+
+                if (this.searchFilter !== '') {
+                    filterFichas = filterFichas.filter(ficha => 
+                        ficha.nombre.toLowerCase().includes(this.searchFilter.toLowerCase()) || 
+                        ficha.folio.toLowerCase().includes(this.searchFilter.toLowerCase())
+                    );
+                }
+
+                return filterFichas; 
             }
         }, 
         
 
         methods: {
+            handleSearch(search) {
+                this.searchFilter = search; 
+            },
             getStates(ficha) {
                 const fichaStateId = ficha.estado_id;
                 
@@ -273,6 +293,9 @@
             </CButton>
         </CCol>
     </CRow>
+    <div class="mt-5">
+        <SearchBarFilter @search="handleSearch" placeholder="Buscar ficha..." />
+    </div>
     
     <CTable class="mt-5">
         <CTableHead color="dark">
@@ -286,7 +309,7 @@
             </CTableRow>
         </CTableHead>
         <CTableBody>
-            <CTableRow v-for="ficha in fichas.data" :key="ficha.id">
+            <CTableRow v-for="ficha in filteredFichas" :key="ficha.id">
                 <CTableDataCell class="text-center">{{ ficha.folio }}</CTableDataCell>
                 <CTableDataCell class="text-center">{{ ficha.nombre }}</CTableDataCell>
                 <CTableDataCell class="text-center">{{ shortDateFormat(ficha.fecha_sentencia) }}</CTableDataCell>
